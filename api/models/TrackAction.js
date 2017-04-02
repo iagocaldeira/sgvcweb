@@ -8,16 +8,15 @@
 module.exports = {
 
   attributes: {
-    
+
     position : { type: 'string' },
 
     time : { type: 'string' },
-    
+
     isStart : { type: 'boolean' },
-    
+
     isEnd : { type: 'boolean' },
 
     driver : {  model: 'driver'}
   }
 };
-

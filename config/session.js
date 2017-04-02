@@ -74,8 +74,8 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  // adapter: 'mongo',
-  // url: 'mongodb://user:password@localhost:27017/dbname', // user, password and port optional
+  adapter: 'mongo',
+  url: 'mongodb://sgvcweb:sgvcweb_pass@ds143030.mlab.com:43030/sgvcweb', // user, password and port optional
 
   /***************************************************************************
   *                                                                          *
