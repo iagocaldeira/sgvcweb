@@ -83,23 +83,31 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
     }
 
     function printLoaded(r) {
-        $scope.printDrivers = r.map(p => {
+        /*
+        .filter((m, i) => {
+            return m.startList
+
+        })
+         */
+        $scope.printDrivers = r.map(function (p) {
             if (p.empty) {
-                p.infoList = p.gpx.map((m,i) => {
-                    var infos = {distancia: 0,valor: 0};
-                    var tempGPX = new L.GPX(m, {async: false});
+                p.infoList = p.gpx.map(function (m) {
+                    var infos = { distancia: 0, valor: 0 };
+                    var tempGPX = new L.GPX(m, { async: false });
                     infos.distancia = (tempGPX.get_distance() / 1000).toFixed(2);
                     infos.valor = (infos.distancia * precoKM).toFixed(2);
                     return infos;
                 });
                 p.totalValue = p.infoList.reduce(
-                    (a, b) =>
-                        Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100
-                    , 0);
+                    function (a, b) {
+                        return Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100
+                            , 0
+                    });
                 p.totalDistance = p.infoList.reduce(
-                    (a, b) =>
-                        Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100
-                    , 0);
+                    function (a, b) {
+                        return Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100
+                            , 0
+                    });
                 return p;
             }
             return { name: p.name, empty: true };
@@ -108,17 +116,16 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
     }
 
     $scope.print = function () {
-        $scope.$evalAsync(() =>
-            routeService.loadReports()
-                .then((r) =>
-                    printLoaded(r)
-                )
-        );
+        $scope.$evalAsync(function () {
+            return routeService.loadReports()
+                .then(function (r) {
+                    return printLoaded(r)
+                });
+        });
 
-        $scope.$watch("printDrivers", (value) => {
-            console.log(renderPrint);
+        $scope.$watch("printDrivers", function (value) {
             if (value && renderPrint) {
-                $timeout(() => {
+                $timeout(function () {
                     if (renderPrint) {
                         window.print();
                         renderPrint = false;
@@ -128,7 +135,6 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
             }
         });
     }
-
 }])
 
 app.service('routeService', ['$q', '$http', function ($q, $http) {
@@ -136,21 +142,21 @@ app.service('routeService', ['$q', '$http', function ($q, $http) {
         loadDrivers: function () {
             return $q.when($http
                 .get('/driver')
-                .then(o => o.data)
+                .then(function (o) { return o.data })
             );
         },
         loadRoutes: function (driverId) {
             return $q.when(
                 $http
                     .get('/trackaction/getGpxRoutesByDriver/' + driverId)
-                    .then(o => o.data)
+                    .then(function (o) { return o.data })
             );
         },
         loadReports: function () {
             return $q.when(
                 $http
                     .get('/trackaction/getReportData/')
-                    .then(o => o.data)
+                    .then(function (o) { return o.data })
             );
         }
     };
