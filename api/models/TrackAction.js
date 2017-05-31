@@ -9,7 +9,9 @@ module.exports = {
 
   attributes: {
 
-    position : { type: 'string' },
+    lat : { type: 'string' },
+
+    lon : { type: 'string' },
 
     time : { type: 'string' },
 
@@ -17,6 +19,6 @@ module.exports = {
 
     isEnd : { type: 'boolean' },
 
-    driver : {  model: 'driver'}
+  driver : {  model: 'driver'}
   }
 };

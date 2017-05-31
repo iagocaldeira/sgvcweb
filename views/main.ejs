@@ -1,0 +1,99 @@
+<div ng-app="MapsApp" style="height:100%">
+  <div layout="column" ng-controller="AppCtrl" style="height:100%">
+    <md-toolbar layout="row">
+      <md-button ng-click="toggleSidenav('left')" hide-gt-sm class="no-print md-icon-button menuBtn">
+        <md-icon aria-label="Menu" md-svg-icon="https://s3-us-west-2.amazonaws.com/s.cdpn.io/68133/menu.svg"></md-icon>
+      </md-button>
+      <div class="md-toolbar-tools">
+        <label layout-align-gt-sm="left" for="repeatSelect" class="no-print"> Motoristas:&nbsp </label>
+        <select layout-align-gt-sm="left" ng-model="driver" class="no-print" ng-change="selectDriver(driver)" ng-options="driver as driver.name for driver in  drivers"></select>
+
+        <h1 layout-align-gt-sm="center" class="md-toolbar-tools">Sistema de Gerenciamento de Veículos Comissionados</h1>
+
+      </div>
+    </md-toolbar>
+    <div class="no-print" ng-show="routes.length==0">
+      <h2>Nenhuma rota a ser exibida!</h2>
+      <h3 ng-show="routes.labels">Esse motorista ainda não concluiu nenhuma viagem.</h3>
+      <h3 ng-show="!driver">Por favor selecione um motorista acima.</h3>
+    </div>
+    <div ng-show="routes.labels.length>0" layout="row" flex class="content-wrapper no-print">
+      <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')">
+        <md-list class="route-list">
+          <md-item ng-repeat="label in routes.labels track by $index">
+            <hr>
+            <md-item-content>
+              <md-button ng-click="selectMap($index)" ng-class="{'selected' : $index === selectedIndex }">
+                <h4><i class="fa fa-map-o"></i>&nbsp Rota {{$index}}</h4>
+                <p ng-show="label">Data: {{label | date:"dd/MM/yyyy h:mma"}}</p>
+
+              </md-button>
+            </md-item-content>
+          </md-item>
+          <md-item style="position: fixed;bottom: 50px;width: 95%;text-align: center;background-color: white">
+            <md-item-content>
+              <label >Mes:&nbsp </label>
+              <select ng-model="selectedFilter" ng-change="selectFilter()" ng-options="filter for filter in filters"></select>
+            </md-item-content>
+          </md-item>
+          <md-item style="position: fixed;bottom: 0;width: 95%;">
+            <md-item-content>
+              <md-button ng-click="print()" class="md-raised" style="width: 100%;text-align: center;background-color: white">Gerar Relatórios</md-button>
+            </md-item-content>
+          </md-item>
+        </md-list>
+      </md-sidenav>
+      <div layout="column" flex class="content-wrapper" id="primary-col">
+        <md-content layout="column" flex class="md-padding">
+          <div ng-show="show">
+            <h3>Distância: {{selected.distancia}} KM</h3>
+            <h3>Tempo: {{selected.tempo}}</h3>
+            <h3>Valor: R$ {{selected.valor}}</h3>
+            <div class="cell">
+              <div class="map" id="map"></div>
+            </div>
+          </div>
+        </md-content>
+      </div>
+    </div>
+
+
+
+
+    <!-- hidden print html -->
+    <div id="print">
+      <h1>Relatório SGVC - Outubro de 2010</h1>
+      <div class="print-driver" ng-repeat="d in printDrivers">
+        <h2>Motorista:{{d.name}}</h2>
+        <span ng-show="d.empty|| !d.startList || d.startList.length==0">Nenhuma viagem encontrada</span>
+        <table ng-hide="d.empty || !d.startList || d.startList.length==0" class="table">
+          <thead>
+            <th>Início</th>
+            <th>Término</th>
+            <th>Distância</th>
+            <th>Valor</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="start in d.startList track by $index">
+              <td>{{start | date:"dd/MM/yyyy h:mma" }}</td>
+              <td>{{d.endList[$index] | date:"dd/MM/yyyy h:mma" }}</td>
+              <td>{{d.infoList[$index].distancia}} KM</td>
+              <td>R$ {{d.infoList[$index].valor}}</td>
+            </tr>
+            <tr style="background-color: gray">
+              <td><b>Total<b/></td>
+              <td></td>
+              <td><b>{{ d.totalDistance }} KM</b></td>
+              <td><b>R$ {{ d.totalValue }}</b></td>
+            </tr>
+          </tbody>
+        </table>
+        <br/>
+      </div>
+
+    </div>
+
+
+
+  </div>
+</div>
