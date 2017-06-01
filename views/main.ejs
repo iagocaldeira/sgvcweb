@@ -62,11 +62,12 @@
 
     <!-- hidden print html -->
     <div id="print">
-      <h1>Relatório SGVC - Outubro de 2010</h1>
+      <h1>Relatório SGVC - <span ng-show="selectedFilter!='Todos'">{{ selectedFilter }} de </span>2017</h1>
       <div class="print-driver" ng-repeat="d in printDrivers">
         <h2>Motorista:{{d.name}}</h2>
         <span ng-show="d.empty|| !d.startList || d.startList.length==0">Nenhuma viagem encontrada</span>
         <table ng-hide="d.empty || !d.startList || d.startList.length==0" class="table">
+        <!--<table class="table">-->
           <thead>
             <th>Início</th>
             <th>Término</th>

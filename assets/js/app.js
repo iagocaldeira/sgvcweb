@@ -1,5 +1,16 @@
 var app = angular.module('MapsApp', ['ngMaterial']);
 
+app.filter('sumByColumn', function () {
+    return function (collection, column) {
+        var total = 0;
+
+        collection.forEach(function (item) {
+            total += parseInt(item[column]);
+        });
+
+        return total;
+    };
+});
 app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '$log', '$http', function ($scope, $mdSidenav, routeService, $timeout, $log, $http) {
     var precoKM = 0.7;
     var loaded = false;
@@ -90,7 +101,8 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
         })
          */
         $scope.printDrivers = r.map(function (p) {
-            if (p.empty) {
+            if (!p.empty) {
+                var d = new Date(p.startList);
                 p.infoList = p.gpx.map(function (m) {
                     var infos = { distancia: 0, valor: 0 };
                     var tempGPX = new L.GPX(m, { async: false });
@@ -98,16 +110,8 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
                     infos.valor = (infos.distancia * precoKM).toFixed(2);
                     return infos;
                 });
-                p.totalValue = p.infoList.reduce(
-                    function (a, b) {
-                        return Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100
-                            , 0
-                    });
-                p.totalDistance = p.infoList.reduce(
-                    function (a, b) {
-                        return Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100
-                            , 0
-                    });
+                p.totalValue = p.infoList.reduce(function (a, b) { return Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100 }, 0);
+                p.totalDistance = p.infoList.reduce(function (a, b) { return Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100 }, 0);
                 return p;
             }
             return { name: p.name, empty: true };
@@ -135,7 +139,9 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
             }
         });
     }
+
 }])
+
 
 app.service('routeService', ['$q', '$http', function ($q, $http) {
     return {
