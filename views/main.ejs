@@ -33,7 +33,7 @@
           <md-item style="position: fixed;bottom: 50px;width: 95%;text-align: center;background-color: white">
             <md-item-content>
               <label >Mes:&nbsp </label>
-              <select ng-model="selectedFilter" ng-change="selectFilter()" ng-options="filter for filter in filters"></select>
+              <select ng-model="selectedFilter" ng-options="filter for filter in filters"></select>
             </md-item-content>
           </md-item>
           <md-item style="position: fixed;bottom: 0;width: 95%;">
@@ -75,7 +75,7 @@
             <th>Valor</th>
           </thead>
           <tbody>
-            <tr ng-repeat="start in d.startList track by $index">
+            <tr ng-repeat="start in d.startList track by $index" ng-show="d.infoList[$index].distancia>0">
               <td>{{start | date:"dd/MM/yyyy h:mma" }}</td>
               <td>{{d.endList[$index] | date:"dd/MM/yyyy h:mma" }}</td>
               <td>{{d.infoList[$index].distancia}} KM</td>

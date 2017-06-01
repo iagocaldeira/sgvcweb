@@ -35,10 +35,6 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
     $scope.selectedFilter = "Todos";
     loadMaps();
 
-    $scope.selectFilter = function (filter) {
-
-    }
-
     $scope.selectDriver = function (driver) {
         routeService.loadRoutes(driver.id)
             .then(function (routes) {
@@ -94,28 +90,28 @@ app.controller('AppCtrl', ['$scope', '$mdSidenav', 'routeService', '$timeout', '
     }
 
     function printLoaded(r) {
-        /*
-        .filter((m, i) => {
-            return m.startList
-
-        })
-         */
-        $scope.printDrivers = r.map(function (p) {
-            if (!p.empty) {
-                var d = new Date(p.startList);
-                p.infoList = p.gpx.map(function (m) {
-                    var infos = { distancia: 0, valor: 0 };
-                    var tempGPX = new L.GPX(m, { async: false });
-                    infos.distancia = (tempGPX.get_distance() / 1000).toFixed(2);
-                    infos.valor = (infos.distancia * precoKM).toFixed(2);
-                    return infos;
-                });
-                p.totalValue = p.infoList.reduce(function (a, b) { return Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100 }, 0);
-                p.totalDistance = p.infoList.reduce(function (a, b) { return Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100 }, 0);
-                return p;
-            }
-            return { name: p.name, empty: true };
-        });
+        $scope.printDrivers = r
+            .map(function (p) {
+                if (!p.empty) {
+                    var d = new Date(p.startList);
+                    p.infoList = p.gpx
+                        .map(function (m,i) {
+                            var infos = { distancia: 0, valor: 0 };
+                            if ($scope.selectedFilter == 'Todos' || (new Date(p.startList[i])).getMonth() + 1 == $scope.filters.indexOf($scope.selectedFilter)) {
+                                var tempGPX = new L.GPX(m, { async: false });
+                                infos.distancia = (tempGPX.get_distance() / 1000).toFixed(2);
+                                infos.valor = (infos.distancia * precoKM).toFixed(2);
+                            }
+                            return infos;
+                        });
+                    p.totalValue = p.infoList
+                        .reduce(function (a, b) { return Math.round(100 * (parseFloat(b.valor) + parseFloat(a))) / 100 }, 0);
+                    p.totalDistance = p.infoList
+                        .reduce(function (a, b) { return Math.round(100 * (parseFloat(b.distancia) + parseFloat(a))) / 100 }, 0);
+                    return p;
+                }
+                return { name: p.name, empty: true };
+            });
         renderPrint = true;
     }
 
